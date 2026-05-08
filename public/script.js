@@ -1,20 +1,55 @@
+// --- REFERENCIAS A ELEMENTOS ---
+const vistaBienvenida = document.getElementById('vista-bienvenida');
 const vistaAcceso = document.getElementById('vista-acceso');
 const vistaVentas = document.getElementById('vista-ventas');
+const boxLogin = document.getElementById('box-login');
+const boxRegistro = document.getElementById('box-registro');
 const mensaje = document.getElementById('mensaje');
 
-// Verifica si el usuario ya está logueado al cargar
+// --- NAVEGACIÓN INICIAL ---
+
+document.getElementById('btn-ir-login').addEventListener('click', () => {
+    vistaBienvenida.classList.add('hidden');
+    vistaAcceso.classList.remove('hidden');
+    boxLogin.classList.remove('hidden');
+    boxRegistro.classList.add('hidden');
+});
+
+document.getElementById('btn-ir-registro').addEventListener('click', () => {
+    vistaBienvenida.classList.add('hidden');
+    vistaAcceso.classList.remove('hidden');
+    boxRegistro.classList.remove('hidden');
+    boxLogin.classList.add('hidden');
+});
+
+function volverBienvenida() {
+    vistaBienvenida.classList.remove('hidden');
+    vistaAcceso.classList.add('hidden');
+    boxLogin.classList.add('hidden');
+    boxRegistro.classList.add('hidden');
+    mensaje.innerText = "";
+}
+
+// --- AUTENTICACIÓN ---
+
 function checkAuth() {
     const token = localStorage.getItem('token');
     if (token) {
+        // Usuario logueado: mostramos ventas, ocultamos el resto
+        vistaBienvenida.classList.add('hidden');
         vistaAcceso.classList.add('hidden');
         vistaVentas.classList.remove('hidden');
+        cargarProductos(); 
     } else {
-        vistaAcceso.classList.remove('hidden');
+        // Usuario no logueado: mostramos bienvenida, ocultamos ventas
+        vistaBienvenida.classList.remove('hidden');
+        vistaAcceso.classList.add('hidden');
         vistaVentas.classList.add('hidden');
     }
 }
 
-// --- REGISTRO ---
+// --- REGISTRO Y LOGIN ---
+
 document.getElementById('register-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombre = document.getElementById('reg-nombre').value;
@@ -28,21 +63,21 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
             body: JSON.stringify({ nombre, email, password })
         });
         const data = await res.json();
-        
         if (res.ok) {
             mensaje.innerText = "¡Registro exitoso! Ya puedes ingresar.";
             mensaje.style.color = "green";
             e.target.reset();
+            setTimeout(() => {
+                boxRegistro.classList.add('hidden');
+                boxLogin.classList.remove('hidden');
+            }, 1500);
         } else {
             mensaje.innerText = "Error: " + (data.detalle || data.error);
             mensaje.style.color = "red";
         }
-    } catch (err) { 
-        mensaje.innerText = "Error al conectar con el servidor"; 
-    }
+    } catch (err) { mensaje.innerText = "Error de conexión"; }
 });
 
-// --- LOGIN ---
 document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
@@ -55,7 +90,6 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
             body: JSON.stringify({ email, password })
         });
         const data = await res.json();
-
         if (res.ok) {
             localStorage.setItem('token', data.token);
             mensaje.innerText = "Ingresando...";
@@ -65,15 +99,12 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
                 checkAuth(); 
             }, 1000);
         } else {
-            mensaje.innerText = "Error: " + data.mensaje;
+            mensaje.innerText = "Error: " + (data.mensaje || "Acceso denegado");
             mensaje.style.color = "red";
         }
-    } catch (err) { 
-        mensaje.innerText = "Error al conectar con el servidor"; 
-    }
+    } catch (err) { mensaje.innerText = "Error de conexión"; }
 });
 
-// --- CERRAR SESIÓN ---
 document.getElementById('logout-btn').addEventListener('click', () => {
     localStorage.removeItem('token');
     checkAuth();
@@ -81,9 +112,24 @@ document.getElementById('logout-btn').addEventListener('click', () => {
     mensaje.style.color = "black";
 });
 
-// Inicializar
-checkAuth();
-// --- AGREGAR PRODUCTO ---
+// --- GESTIÓN DE PRODUCTOS ---
+
+async function cargarProductos() {
+    const lista = document.getElementById('lista-productos');
+    try {
+        const res = await fetch('/api/productos');
+        const productos = await res.json();
+        lista.innerHTML = ""; 
+        productos.forEach(p => {
+            const li = document.createElement('li');
+            li.style.padding = "10px";
+            li.style.borderBottom = "1px solid #ddd";
+            li.innerHTML = `<strong>${p.nombre}</strong> - $${p.precio} (Stock: ${p.stock})`;
+            lista.appendChild(li);
+        });
+    } catch (err) { console.error("Error al cargar productos", err); }
+}
+
 document.getElementById('producto-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const nombre = document.getElementById('prod-nombre').value;
@@ -96,54 +142,14 @@ document.getElementById('producto-form').addEventListener('submit', async (e) =>
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nombre, precio, stock })
         });
-        const data = await res.json();
-
         if (res.ok) {
-            mensaje.innerText = "¡Producto guardado!";
-            mensaje.style.color = "green";
             e.target.reset();
-            cargarProductos(); // Refrescar la lista automáticamente
-        } else {
-            mensaje.innerText = "Error: " + data.detalle;
-            mensaje.style.color = "red";
+            cargarProductos();
         }
-    } catch (err) {
-        mensaje.innerText = "Error de conexión al guardar producto";
-    }
+    } catch (err) { console.error(err); }
 });
 
-// --- CARGAR LISTA DE PRODUCTOS ---
-async function cargarProductos() {
-    const lista = document.getElementById('lista-productos');
-    try {
-        const res = await fetch('/api/productos');
-        const productos = await res.json();
-
-        lista.innerHTML = ""; // Limpiar lista
-        productos.forEach(p => {
-            const li = document.createElement('li');
-            li.style.padding = "10px";
-            li.style.borderBottom = "1px solid #ddd";
-            li.innerHTML = `<strong>${p.nombre}</strong> - $${p.precio} (Stock: ${p.stock})`;
-            lista.appendChild(li);
-        });
-    } catch (err) {
-        console.error("Error al cargar productos", err);
-    }
-}
-
-// Escuchar el botón de actualizar lista
 document.getElementById('btn-cargar-productos').addEventListener('click', cargarProductos);
 
-// Modificar checkAuth para que cargue productos si hay sesión activa
-function checkAuth() {
-    const token = localStorage.getItem('token');
-    if (token) {
-        vistaAcceso.classList.add('hidden');
-        vistaVentas.classList.remove('hidden');
-        cargarProductos(); // <--- Cargar lista al entrar
-    } else {
-        vistaAcceso.classList.remove('hidden');
-        vistaVentas.classList.add('hidden');
-    }
-}
+// INICIO
+checkAuth();

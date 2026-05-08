@@ -68,4 +68,19 @@ button {
     font-weight: bold; 
     min-height: 20px; 
     margin-top: 15px; 
+} 
+.hidden {
+    display: none !important;
+}
+
+.btn-link {
+    background: none;
+    color: #007bff;
+    border: none;
+    padding: 10px 0;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: block;
+    margin-top: 10px;
 }

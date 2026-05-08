@@ -9,50 +9,60 @@
 <body>
 
     <div class="container">
-        <!-- VISTA DE ACCESO (REGISTRO Y LOGIN) -->
-        <div id="vista-acceso">
-            <div class="form-box">
+        
+        <div id="vista-bienvenida">
+            <h2>Bienvenido al Sistema</h2>
+            <p style="text-align: center;">Elige una opción para comenzar:</p>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="btn-ir-login" class="btn-primary">Iniciar Sesión</button>
+                <button id="btn-ir-registro" class="btn-success">Registrarse</button>
+            </div>
+        </div>
+
+        <div id="vista-acceso" class="hidden">
+            
+            <div id="box-login" class="form-box hidden">
                 <h2>Iniciar Sesión</h2>
                 <form id="login-form">
                     <input type="email" id="login-email" placeholder="Email" required>
                     <input type="password" id="login-password" placeholder="Contraseña" required>
                     <button type="submit" class="btn-primary">Ingresar</button>
                 </form>
+                <button class="btn-link" onclick="volverBienvenida()">← Volver atrás</button>
             </div>
 
-            <div class="form-box">
-                <h2>¿No tienes cuenta? Regístrate</h2>
+            <div id="box-registro" class="form-box hidden">
+                <h2>Crear Cuenta</h2>
                 <form id="register-form">
                     <input type="text" id="reg-nombre" placeholder="Nombre completo" required>
                     <input type="email" id="reg-email" placeholder="Email" required>
                     <input type="password" id="reg-password" placeholder="Contraseña" required>
-                    <button type="submit" class="btn-success">Crear Cuenta</button>
+                    <button type="submit" class="btn-success">Registrarse</button>
                 </form>
+                <button class="btn-link" onclick="volverBienvenida()">← Volver atrás</button>
             </div>
         </div>
 
-        <!-- VISTA DE VENTAS -->
         <div id="vista-ventas" class="hidden">
             <h2>🛒 Panel de Ventas</h2>
-            <p>Bienvenido al sistema de ventas.</p>
-            <!-- Dentro de <div id="vista-ventas"> -->
-<div class="panel-operaciones">
-    <h3>📦 Agregar Nuevo Producto</h3>
-    <form id="producto-form">
-        <input type="text" id="prod-nombre" placeholder="Nombre del producto" required>
-        <input type="number" id="prod-precio" step="0.01" placeholder="Precio (ej: 150.50)" required>
-        <input type="number" id="prod-stock" placeholder="Stock inicial" required>
-        <button type="submit" class="btn-success">Guardar Producto</button>
-    </form>
-</div>
+            <p>Sesión activa - Gestión de Inventario</p>
+            
+            <div class="panel-operaciones">
+                <h3>📦 Agregar Nuevo Producto</h3>
+                <form id="producto-form">
+                    <input type="text" id="prod-nombre" placeholder="Nombre del producto" required>
+                    <input type="number" id="prod-precio" step="0.01" placeholder="Precio (ej: 150.50)" required>
+                    <input type="number" id="prod-stock" placeholder="Stock inicial" required>
+                    <button type="submit" class="btn-success">Guardar Producto</button>
+                </form>
+            </div>
 
-<div class="panel-operaciones">
-    <h3>📋 Inventario Actual</h3>
-    <button id="btn-cargar-productos" class="btn-primary" style="margin-bottom: 10px;">Actualizar Lista</button>
-    <ul id="lista-productos" style="list-style: none; padding: 0;">
-        <!-- Aquí aparecerán los productos -->
-    </ul>
-</div>
+            <div class="panel-operaciones">
+                <h3>📋 Inventario Actual</h3>
+                <button id="btn-cargar-productos" class="btn-primary" style="margin-bottom: 10px;">Actualizar Lista</button>
+                <ul id="lista-productos" style="list-style: none; padding: 0;">
+                    </ul>
+            </div>
             
             <div class="panel-operaciones">
                 <h4>Realizar una operación</h4>
