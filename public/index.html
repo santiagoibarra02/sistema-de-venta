@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Ventas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- VISTA DE ACCESO (REGISTRO Y LOGIN) -->
+        <div id="vista-acceso">
+            <div class="form-box">
+                <h2>Iniciar Sesión</h2>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Contraseña" required>
+                    <button type="submit" class="btn-primary">Ingresar</button>
+                </form>
+            </div>
+
+            <div class="form-box">
+                <h2>¿No tienes cuenta? Regístrate</h2>
+                <form id="register-form">
+                    <input type="text" id="reg-nombre" placeholder="Nombre completo" required>
+                    <input type="email" id="reg-email" placeholder="Email" required>
+                    <input type="password" id="reg-password" placeholder="Contraseña" required>
+                    <button type="submit" class="btn-success">Crear Cuenta</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- VISTA DE VENTAS -->
+        <div id="vista-ventas" class="hidden">
+            <h2>🛒 Panel de Ventas</h2>
+            <p>Bienvenido al sistema de ventas.</p>
+            <!-- Dentro de <div id="vista-ventas"> -->
+<div class="panel-operaciones">
+    <h3>📦 Agregar Nuevo Producto</h3>
+    <form id="producto-form">
+        <input type="text" id="prod-nombre" placeholder="Nombre del producto" required>
+        <input type="number" id="prod-precio" step="0.01" placeholder="Precio (ej: 150.50)" required>
+        <input type="number" id="prod-stock" placeholder="Stock inicial" required>
+        <button type="submit" class="btn-success">Guardar Producto</button>
+    </form>
+</div>
+
+<div class="panel-operaciones">
+    <h3>📋 Inventario Actual</h3>
+    <button id="btn-cargar-productos" class="btn-primary" style="margin-bottom: 10px;">Actualizar Lista</button>
+    <ul id="lista-productos" style="list-style: none; padding: 0;">
+        <!-- Aquí aparecerán los productos -->
+    </ul>
+</div>
+            
+            <div class="panel-operaciones">
+                <h4>Realizar una operación</h4>
+                <p>Aquí puedes gestionar tus productos y ventas actuales.</p>
+            </div>
+
+            <button id="logout-btn" class="btn-danger">Cerrar Sesión</button>
+        </div>
+
+        <p id="mensaje"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
